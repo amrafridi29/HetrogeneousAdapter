@@ -6,19 +6,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kadapter.R
-import com.example.kadapter.generic.GenericAdapter
-import com.example.kadapter.generic.ItemBinder
-import com.example.kadapter.generic.ItemClass
-import com.example.kadapter.generic.ItemViewBinder
+import com.example.kadapter.generic.*
 import com.example.kadapter.models.HorizontalImageInner
 import com.example.kadapter.models.HorizontalImageInnerList
 import kotlinx.android.synthetic.main.adapter_inner_recyclerview.view.*
 
 class HorizontalImageInnerListViewBinder() :
         ItemViewBinder<HorizontalImageInnerList , HorizontalImageInnerListViewHolder>(HorizontalImageInnerList::class.java){
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        return HorizontalImageInnerListViewHolder(LayoutInflater.from(parent.context).
-        inflate(getItemType() , parent , false))
+    override fun onCreateViewHolder(parent: ViewGroup):BaseViewHolder<HorizontalImageInnerList> {
+        return HorizontalImageInnerListViewHolder(parent.getLayout(getItemType()))
     }
 
     override fun onBindViewHolder(
@@ -48,18 +44,19 @@ class HorizontalImageInnerListViewBinder() :
 
 }
 
-class HorizontalImageInnerListViewHolder(val view : View) : RecyclerView.ViewHolder(view){
-    fun onBind(model : HorizontalImageInnerList){
-        val horizontalImageInnerViewBinder = HorizontalImageInnerViewBinder()
-        val viewBinders= mutableMapOf<ItemClass , ItemBinder>()
-        viewBinders.put(horizontalImageInnerViewBinder.modelClass,
-        horizontalImageInnerViewBinder as ItemBinder)
-        val adapter = GenericAdapter(viewBinders)
+class HorizontalImageInnerListViewHolder(val itemView : View) : BaseViewHolder<HorizontalImageInnerList>(itemView){
+    override fun onBind(model: HorizontalImageInnerList) {
+        Adapter.Builder()
+            .addViewBinder(HorizontalImageInnerViewBinder())
+            .submitList(model.images as MutableList<Any>)
+            .setLayoutManager( LinearLayoutManager(view.context , RecyclerView.HORIZONTAL , false))
+            .into(view.adapter_recycllerview)
+            .build()
         view.apply {
             tv_horizontal_header.text = model.title
-            adapter_recycllerview.layoutManager= LinearLayoutManager(context , RecyclerView.HORIZONTAL , false)
-            adapter_recycllerview.adapter = adapter
-            adapter.submitList(model.images)
+
+
         }
     }
+
 }

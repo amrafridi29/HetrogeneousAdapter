@@ -7,8 +7,10 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kadapter.generic.Adapter
 import com.example.kadapter.generic.GenericAdapter
 import com.example.kadapter.generic.ItemBinder
 import com.example.kadapter.generic.ItemClass
@@ -59,23 +61,25 @@ class MainActivity : AppCompatActivity() {
             data.add(VerticalImage(getFoodImages(i)))
         }
 
+        val adapter = Adapter.Builder()
+            .addViewBinder(HorizontalImageListViewBinder())
+            .addViewBinder(HorizontalImageInnerListViewBinder())
+            .addViewBinder(VerticalImageViewBinder(::verticalImageClick))
+            .submitList(data)
+            .setLayoutManager(LinearLayoutManager(this , RecyclerView.VERTICAL , false))
+            .into(rv_data)
+            .build()
 
-        val horizontalImageListViewBinder = HorizontalImageListViewBinder()
-        val horizontalImageInnerListViewBinder = HorizontalImageInnerListViewBinder()
-        val verticalImageViewBinder = VerticalImageViewBinder()
-        val viewBinders = mutableMapOf<ItemClass , ItemBinder>()
-        viewBinders.put(horizontalImageListViewBinder.modelClass ,
-            horizontalImageListViewBinder  as ItemBinder)
-        viewBinders.put(horizontalImageInnerListViewBinder.modelClass,
-            horizontalImageInnerListViewBinder  as ItemBinder)
-        viewBinders.put(verticalImageViewBinder.modelClass,
-        verticalImageViewBinder as ItemBinder)
 
-        val adapter = GenericAdapter(viewBinders)
-        rv_data.layoutManager = LinearLayoutManager(this , RecyclerView.VERTICAL , false)
-        rv_data.adapter = adapter
-        adapter.submitList(data)
 
+
+
+
+
+    }
+
+    fun verticalImageClick(model : VerticalImage){
+        Toast.makeText(this , "Food Image Click" , Toast.LENGTH_SHORT).show()
     }
 
     private fun getCouplesImages(number : Int) : Int {

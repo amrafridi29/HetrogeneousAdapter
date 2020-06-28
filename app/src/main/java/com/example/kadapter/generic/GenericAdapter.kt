@@ -5,10 +5,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 typealias ItemClass = Class<out Any>
-typealias ItemBinder = ItemViewBinder<Any , RecyclerView.ViewHolder>
+typealias ItemBinder = ItemViewBinder<Any , BaseViewHolder<Any>>
 
 class GenericAdapter (private val viewBinders : Map<ItemClass , ItemBinder>)
-    : ListAdapter<Any , RecyclerView.ViewHolder>(GenericDiffUtilCallback(viewBinders)){
+    : ListAdapter<Any , BaseViewHolder<Any>>(GenericDiffUtilCallback(viewBinders)){
 
 
 
@@ -20,13 +20,23 @@ class GenericAdapter (private val viewBinders : Map<ItemClass , ItemBinder>)
         return viewBinders.getValue(getItem(position).javaClass).getItemType()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<Any> {
         return getViewBinders(viewType).onCreateViewHolder(parent)
     }
 
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder:BaseViewHolder<Any>, position: Int) {
         getViewBinders(getItemViewType(position)).onBindViewHolder(getItem(position) , holder)
+    }
+
+    override fun onViewRecycled(holder: BaseViewHolder<Any>) {
+        getViewBinders(holder.itemViewType).onViewRecycled(holder)
+        super.onViewRecycled(holder)
+    }
+
+    override fun onViewDetachedFromWindow(holder: BaseViewHolder<Any>) {
+        getViewBinders(holder.itemViewType).onViewDetachedFromWindow(holder)
+        super.onViewDetachedFromWindow(holder)
     }
 
 

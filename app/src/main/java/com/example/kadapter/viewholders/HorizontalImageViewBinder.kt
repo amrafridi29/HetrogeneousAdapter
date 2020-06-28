@@ -6,15 +6,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.kadapter.R
+import com.example.kadapter.generic.BaseViewHolder
 import com.example.kadapter.generic.ItemViewBinder
+import com.example.kadapter.generic.getLayout
 import com.example.kadapter.models.HorizontalImage
 import kotlinx.android.synthetic.main.adapter_horizontal_image.view.*
 
 class HorizontalImageViewBinder() :
         ItemViewBinder<HorizontalImage , HorizontalImageViewHolder>(HorizontalImage::class.java){
-    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        return HorizontalImageViewHolder(LayoutInflater.from(parent.context)
-            .inflate(getItemType() , parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup): BaseViewHolder<HorizontalImage> {
+        return HorizontalImageViewHolder(parent.getLayout(getItemType()))
     }
 
     override fun onBindViewHolder(model: HorizontalImage, viewHolder: HorizontalImageViewHolder) {
@@ -35,8 +36,8 @@ class HorizontalImageViewBinder() :
 
 }
 
-class HorizontalImageViewHolder(val view : View) : RecyclerView.ViewHolder(view){
-    fun onBind(model : HorizontalImage){
+class HorizontalImageViewHolder(val itemView : View) :BaseViewHolder<HorizontalImage>(itemView){
+   override fun onBind(model : HorizontalImage){
         Glide.with(view.context)
             .load(model.image)
             .centerCrop()
