@@ -45,7 +45,7 @@ class HorizontalImageInnerListViewBinder() :
 }
 
 class HorizontalImageInnerListViewHolder(val itemView : View) : BaseViewHolder<HorizontalImageInnerList>(itemView){
-    override fun onBind(model: HorizontalImageInnerList) {
+  override  fun onBind(model : HorizontalImageInnerList){
         Adapter.Builder()
             .addViewBinder(HorizontalImageInnerViewBinder())
             .submitList(model.images as MutableList<Any>)
@@ -54,9 +54,6 @@ class HorizontalImageInnerListViewHolder(val itemView : View) : BaseViewHolder<H
             .build()
         view.apply {
             tv_horizontal_header.text = model.title
-
-
         }
     }
-
 }

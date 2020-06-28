@@ -2,6 +2,7 @@ package com.example.kadapter
 
 import android.content.Context
 import android.os.Bundle
+import android.transition.Slide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -39,6 +40,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun showData() {
 
+        val slideItems = mutableListOf<SlideItem>().apply {
+            add(SlideItem(R.drawable.fv5 , "Food 5"))
+            add(SlideItem(R.drawable.fv4 , "Food 4"))
+            add(SlideItem(R.drawable.fv3 , "Food 3"))
+            add(SlideItem(R.drawable.fv2 , "Food 2"))
+        }
+
+        data.add(SlideItemList(slideItems = slideItems))
 
         for(i in 1..6){
             coupleImages.add(HorizontalImage(getCouplesImages(i) , Constants.HORIZONTAL))
@@ -47,23 +56,36 @@ class MainActivity : AppCompatActivity() {
         for (i in 1..4){
             natureImages.add(HorizontalImageInner(getNatureImages(i) , Constants.HORIZONTAL))
         }
+        data.add(BannerAd(R.drawable.fv5 , title = "Google Play Movies..." ,
+            description = "Google LLC" , rating = 4))
+
         for(i in 1..2){
             data.add(VerticalImage(getFoodImages(i)))
         }
+
+        data.add(BannerAd(R.drawable.fv5 , title = "Google Play Movies..." ,
+            description = "Google LLC" , rating = 4))
         data.add(HorizontalImageList(images = coupleImages , title = "Couples"))
 
         for(i in 3..4){
             data.add(VerticalImage(getFoodImages(i)))
         }
+
+        data.add(BannerAd(R.drawable.fv5 , title = "Google Play Movies..." ,
+            description = "Google LLC" , rating = 4))
         data.add(HorizontalImageInnerList(images = natureImages , title = "Nature"))
 
         for(i in 5..6){
             data.add(VerticalImage(getFoodImages(i)))
         }
 
+
+
         val adapter = Adapter.Builder()
             .addViewBinder(HorizontalImageListViewBinder())
             .addViewBinder(HorizontalImageInnerListViewBinder())
+            .addViewBinder(BannerViewBinder())
+            .addViewBinder(SlideItemListViewBinder())
             .addViewBinder(VerticalImageViewBinder(::verticalImageClick))
             .submitList(data)
             .setLayoutManager(LinearLayoutManager(this , RecyclerView.VERTICAL , false))
