@@ -11,19 +11,17 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kadapter.generic.Adapter
-import com.example.kadapter.generic.GenericAdapter
-import com.example.kadapter.generic.ItemBinder
-import com.example.kadapter.generic.ItemClass
+import com.example.kadapter.generic.*
 import com.example.kadapter.models.*
 import com.example.kadapter.viewholders.*
 import kotlinx.android.synthetic.main.content_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CabCallback {
 
     private val data = mutableListOf<Any>()
     private val coupleImages = mutableListOf<HorizontalImage>()
     private val natureImages = mutableListOf<HorizontalImageInner>()
+    private var cabAction : ContextualActionBar?  = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,23 +79,31 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        val adapter = Adapter.Builder()
+         ContextualActionBar.Builder()
+            .with(this)
+            .setMenu(R.menu.select_menu)
+            .setTitle("Selected Items")
+            .setCloseDrawable(android.R.drawable.btn_plus)
+
+
+
+
+        var counter =0
+        val verticalImageViewBinder =  VerticalImageViewBinder(this){
+            cabAction?.start()
+            cabAction?.setTitle("Selected items (${++counter})")
+        }
+
+        Adapter.Builder()
             .addViewBinder(HorizontalImageListViewBinder())
             .addViewBinder(HorizontalImageInnerListViewBinder())
             .addViewBinder(BannerViewBinder())
             .addViewBinder(SlideItemListViewBinder())
-            .addViewBinder(VerticalImageViewBinder(::verticalImageClick))
+            .addViewBinder(verticalImageViewBinder)
             .submitList(data)
             .setLayoutManager(LinearLayoutManager(this , RecyclerView.VERTICAL , false))
             .into(rv_data)
             .build()
-
-
-
-
-
-
-
     }
 
     fun verticalImageClick(model : VerticalImage){
@@ -149,5 +155,24 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onCreateCab(cab: ContextualActionBar?, menu: Menu?): Boolean {
+        return true
+    }
+
+    override fun onCabItemClicked(item: MenuItem?): Boolean {
+        when(item?.itemId){
+            R.id.menu_delete-> {
+                Toast.makeText(this, "Delete Clicked", Toast.LENGTH_SHORT).show()
+                cabAction?.finish()
+            }
+        }
+        return true
+    }
+
+    override fun onDestroyCab(cab: ContextualActionBar?): Boolean {
+        cab?.setTitle("Selected Items")
+        return true
     }
 }

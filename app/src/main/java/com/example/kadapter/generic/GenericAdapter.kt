@@ -12,6 +12,7 @@ class GenericAdapter (private val viewBinders : Map<ItemClass , ItemBinder>)
 
 
 
+
     private val viewTypeToBinders = viewBinders.mapKeys { it.value.getItemType() }
 
     private fun getViewBinders(viewType : Int) : ItemBinder = viewTypeToBinders.getValue(viewType)
@@ -21,12 +22,13 @@ class GenericAdapter (private val viewBinders : Map<ItemClass , ItemBinder>)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<Any> {
+        getViewBinders(viewType).adapter = this
         return getViewBinders(viewType).onCreateViewHolder(parent)
     }
 
 
     override fun onBindViewHolder(holder:BaseViewHolder<Any>, position: Int) {
-        getViewBinders(getItemViewType(position)).onBindViewHolder(getItem(position) , holder)
+        getViewBinders(getItemViewType(position)).onBindViewHolder(getItem(position) , holder )
     }
 
     override fun onViewRecycled(holder: BaseViewHolder<Any>) {
